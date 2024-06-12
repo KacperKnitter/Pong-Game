@@ -48,23 +48,28 @@ class CollisionSystem(sdl2.ext.Applicator):
         #Zmienne globalne punktów
         global player1_score
         global player2_score
+        global BALL_SPEED
         #Dla kazdego sprite'a sprawdza czy kolizuje z piłką
         collitems = [comp for comp in componentsets if self._overlap(comp)]
         #Jeśli jakiś sprite kolizuje z piłką zmienia kierunek lotu piłki
         if len(collitems) != 0:
-            #Zmiana prędkości piłki dla osi x
+            # Zmiana prędkości piłki dla osi x
             self.ball.velocity.vx = -self.ball.velocity.vx
-
             #Sprite kolizującego obiektu
             sprite = collitems[0][1]
             ballcentery = self.ball.sprite.y + self.ball.sprite.size[1] // 2
             halfheight = sprite.size[1] // 2
             stepsize = halfheight // 10
-            degrees = 0.7
+            degrees = 0.2
             paddlecentery = sprite.y + halfheight
             if ballcentery < paddlecentery:
                 #factor - ilość kroków miedzy srodkiem paletki a piłki
                 factor = (paddlecentery - ballcentery) // stepsize
+                print(round(factor*degrees))
+                if self.ball.velocity.vx > 0:
+                    self.ball.velocity.vx = BALL_SPEED - round(factor*degrees)
+                else:
+                    self.ball.velocity.vx = -BALL_SPEED + round(factor*degrees)
                 self.ball.velocity.vy = -int(round(factor * degrees))
             elif ballcentery > paddlecentery:
                 factor = (ballcentery - paddlecentery) // stepsize
@@ -308,4 +313,4 @@ def run(ai):
 
 
 if __name__ == "__main__":
-    sys.exit(run(True))
+    sys.exit(run())
